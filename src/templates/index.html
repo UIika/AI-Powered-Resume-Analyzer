@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Resume Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', path='logo.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <h1>AI-Powered Resume Analyzer</h1>
+    <form method="post" enctype="multipart/form-data">
+        <label for="resume">Upload Resume:</label>
+        <input type="file" name="resume_file" required>
+        
+        {% if request.session.flash %}
+            <div class="flash-message">{{ request.session.flash }}</div>
+            {% set _ = request.session.pop("flash") %}
+        {% endif %}
+
+        <label for="description">Job Description:</label>
+        <textarea name="job_description" id="description" required oninput="resizeTextarea(this)"></textarea>
+        
+        <button type="submit" id="submit-btn">Analyze</button>
+    </form>
+
+    {% if feedback %}
+        <div class="feedback">
+            <h2>Analysis Feedback:</h2>
+            <p>{{ feedback | safe }}</p>
+        </div>
+    {% endif %}
+
+    <script>
+        function resizeTextarea(textarea) {
+            textarea.style.height = "auto";
+            textarea.style.height = Math.min(textarea.scrollHeight, 300) + "px";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const textarea = document.querySelector("textarea");
+        
+            if (textarea) {
+                textarea.addEventListener("input", function () {
+                    resizeTextarea(textarea);
+                });
+
+                textarea.addEventListener("paste", function () {
+                    setTimeout(() => resizeTextarea(textarea), 10);
+                });
+        
+                resizeTextarea(textarea);
+            }
+        });
+    </script>
+</body>
+</html>
